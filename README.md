@@ -5,9 +5,10 @@ The official Docker deployment solution for Mattermost.
 
 Refer to the [Mattermost Docker deployment guide](https://docs.mattermost.com/install/install-docker.html) for instructions on how to install and use this Docker image.
 
-## Contribute
-PRs are welcome, refer to our [contributing guide](https://developers.mattermost.com/contribute/getting-started/) for an overview of the Mattermost contribution process.
+## root repository
 
-## Upgrading from `mattermost-docker`
+- <https://github.com/mattermost/docker>
 
-This repository replaces the [deprecated mattermost-docker repository](https://github.com/mattermost/mattermost-docker). For an in-depth guide to upgrading, please refer to [this document](https://github.com/mattermost/docker/blob/main/scripts/UPGRADE.md).
+## 初期設定
+
+- <https://zenn.dev/link/comments/0f4bc639c0555e>
