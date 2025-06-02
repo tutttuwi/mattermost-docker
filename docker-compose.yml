@@ -15,11 +15,12 @@ services:
     environment:
       # timezone inside container
       - TZ
-
       # necessary Postgres options/variables
       - POSTGRES_USER
       - POSTGRES_PASSWORD
       - POSTGRES_DB
+    networks:
+      - share-net
 
   mattermost:
     depends_on:
@@ -40,13 +41,13 @@ services:
       - ${MATTERMOST_CLIENT_PLUGINS_PATH}:/mattermost/client/plugins:rw
       - ${MATTERMOST_BLEVE_INDEXES_PATH}:/mattermost/bleve-indexes:rw
       # When you want to use SSO with GitLab, you have to add the cert pki chain of GitLab inside Alpine
-      # to avoid Token request failed: certificate signed by unknown authority 
+      # to avoid Token request failed: certificate signed by unknown authority
       # (link: https://github.com/mattermost/mattermost-server/issues/13059 and https://github.com/mattermost/docker/issues/34)
       # - ${GITLAB_PKI_CHAIN_PATH}:/etc/ssl/certs/pki_chain.pem:ro
     environment:
       # timezone inside container
       - TZ
-
+      - MM_LOCALEDEFAULT=ja
       # necessary Mattermost options/variables (see env.example)
       - MM_SQLSETTINGS_DRIVERNAME
       - MM_SQLSETTINGS_DATASOURCE
@@ -55,15 +56,39 @@ services:
       - MM_BLEVESETTINGS_INDEXDIR
 
       # additional settings
-      - MM_SERVICESETTINGS_SITEURL
+      # - MM_SERVICESETTINGS_SITEURL
+      # Control redirects to the site URL
+      - MM_SERVICESETTINGS_SITEURL:https://localhost
+    networks:
+      - share-net
+  # If you use rolling image tags and feel lucky watchtower can automatically pull new images and
+  # instantiate containers from it. https://containrrr.dev/watchtower/
+  # Please keep in mind watchtower will have access on the docker socket. This can be a security risk.
+  #
+  #  watchtower:
+  #    container_name: watchtower
+  #    image: containrrr/watchtower:latest
+  #    restart: unless-stopped
+  #    volumes:
+  #      - /var/run/docker.sock:/var/run/docker.sock
+#   https-portal:
+#     image: steveltn/https-portal:1
+#     ports:
+#       - "80:80"
+#       - "443:443"
+#     # restart: always
+#     environment:
+#       DOMAINS: "localhost.example.com -> http://mattermost:8065"
+#       # STAGE: 'production' # ステージングが機能するまで本番環境を使用しないでください
+#       STAGE: local
+#       # FORCE_RENEW: 'true'
+#     volumes:
+#       - https-portal-data:/var/lib/https-portal
 
-# If you use rolling image tags and feel lucky watchtower can automatically pull new images and
-# instantiate containers from it. https://containrrr.dev/watchtower/
-# Please keep in mind watchtower will have access on the docker socket. This can be a security risk.
-#
-#  watchtower:
-#    container_name: watchtower
-#    image: containrrr/watchtower:latest
-#    restart: unless-stopped
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock
+# volumes:
+#   https-portal-data:
+
+networks:
+  share-net:
+    external: true
+    driver: bridge
